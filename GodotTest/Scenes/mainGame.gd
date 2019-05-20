@@ -38,11 +38,7 @@ func _physics_process(delta):
 	#velocity multiplier
 	velocity.x = move * runSpeed
 	#max speed
-	if(abs(move) >= velCap):
-		if(sign(move) == 1):
-			move = velCap
-		else:
-			move = -1*velCap
+	move = clamp(move,-1*velCap,velCap)
 	#prevents weird values that oscillate around 0
 	if(abs(move) < .5):
 		move=0
@@ -50,8 +46,8 @@ func _physics_process(delta):
 	#ground
 	if(is_on_floor() == true):
 		#deceleration ground
-		if(sign(move) != 0 ):
-			if(sign(move) == 1 ):
+		if(sign(move) != 0):
+			if(velocity.x > 0):
 				move -= xdecelG
 			else:
 				move += xdecelG		
@@ -77,7 +73,7 @@ func _physics_process(delta):
 	if(is_on_floor() == false):	
 		#deceleration air
 		if(sign(move) != 0):
-			if(sign(move) == 1):
+			if(velocity.x > 0):
 				move -= xdecelA
 			else:
 				move += xdecelA
@@ -86,6 +82,9 @@ func _physics_process(delta):
 			move += xaccelA	
 		if(Input.is_action_pressed("ui_left")):
 			move -= xaccelA
+			#falling animation
+		if(is_on_floor() == false && velocity.y > 150*jumpTime):
+			$AnimationPlayer.play("playerFalling")
 	#----------------------------------------------------------------------------------------------------------------------	
 	#other movement
 	if(Input.is_action_just_pressed("jump") && is_on_floor() == true):
@@ -95,9 +94,7 @@ func _physics_process(delta):
 	if(Input.is_action_just_pressed("jump") && is_on_floor() == false && is_on_wall() == true):
 		$AnimationPlayer.play("playerFlip")
 		velocity.y = -2*jumpHeight/jumpTime
-	#falling animation
-	if(is_on_floor() != true && velocity.y > 0):
-		$AnimationPlayer.play("playerFalling")
+		velocity.x = 0
 	#----------------------------------------------------------------------------------------------------------------------
 	#attack animations (NOT COMPLETE)
 	if(Input.is_action_just_pressed("light attack")):
