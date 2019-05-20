@@ -7,7 +7,9 @@
 [node name="Level1" type="Node2D"]
 
 [node name="Player" parent="." instance=ExtResource( 1 )]
-position = Vector2( -200, -100 )
+position = Vector2( -200, -300 )
+xdecelA = 0.25
+xaccelA = 0.75
 
 [node name="Camera2D" type="Camera2D" parent="Player"]
 current = true
